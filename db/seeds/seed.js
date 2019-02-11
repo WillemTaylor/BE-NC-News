@@ -30,7 +30,6 @@ exports.seed = function(knex, Promise) {
       const articlesRef = createRef(articlesTable, "title", "article_id");
       const formattedComments = formatComments(commentData, articlesRef);
       const formattedTime = dateRef1(formattedComments);
-      console.log(formattedTime);
       return knex("comments")
         .insert(formattedTime)
         .returning("*");
