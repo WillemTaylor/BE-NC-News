@@ -8,11 +8,11 @@
     "lint": "eslint ./",
     "pre-commit": "npm t",
     "posttest": "npm run lint",
-    "createdb": "psql -f ./db/setup.sql",
+    "createdb": "psql -f db/data/setup.sql",
     "migrate-make": "knex migrate:make",
     "migrate-latest": "knex migrate:latest",
     "migrate-rollback": "knex migrate:rollback",
-    "seed": "createdb && knex seed:run"
+    "seed": "knex seed:run"
   },
   "repository": {
     "type": "git",
