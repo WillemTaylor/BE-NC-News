@@ -1,5 +1,3 @@
-const { dateRef } = require("../utils/index");
-
 exports.up = function(knex, Promise) {
   console.log("Creating articles table...");
   return knex.schema.createTable("articles", articlesTable => {
