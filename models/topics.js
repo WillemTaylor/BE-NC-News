@@ -4,8 +4,8 @@ exports.fetchTopics = () => {
   return connection.select("*").from("topics");
 };
 
-exports.insertTopic = req => {
+exports.insertTopic = topic => {
   return connection("topics")
-    .insert(req.body)
+    .insert(topic)
     .returning("*");
 };

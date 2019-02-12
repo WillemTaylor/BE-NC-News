@@ -1,8 +1,12 @@
-const { fetchArticles, insertArticle } = require("../models/articles");
+const {
+  fetchArticles,
+  insertArticle,
+  fetchArticleById
+} = require("../models/articles");
 
 exports.getArticles = (req, res, next) => {
-  const { limit, sortBy, ...whereClauses } = req.query;
-  fetchArticles(limit, sortBy, whereClauses)
+  const { sortBy, order, ...whereClauses } = req.query;
+  fetchArticles(sortBy, order, whereClauses)
     .then(articles => {
       res.status(200).send({ articles });
     })
@@ -10,9 +14,19 @@ exports.getArticles = (req, res, next) => {
 };
 
 exports.postArticle = (req, res, next) => {
-  insertArticle()
+  const newArticle = req.body;
+  insertArticle(newArticle)
     .then(articles => {
       res.status(201).send({ articles });
+    })
+    .catch(console.log);
+};
+
+exports.getArticlebyId = (req, res, next) => {
+  const articleById = req.params.article_id;
+  fetchArticleById(articleById)
+    .then(articles => {
+      res.status(200).send({ articles });
     })
     .catch(console.log);
 };
