@@ -7,6 +7,7 @@ const {
   patchArticleByIdUpdateVote,
   deleteArticle
 } = require("../controllers/articles");
+const { getUsers, postUser, getUserbyId } = require("../controllers/users");
 
 apiRouter
   .route("/topics")
@@ -23,5 +24,12 @@ apiRouter
   .get(getArticlebyId)
   .patch(patchArticleByIdUpdateVote)
   .delete(deleteArticle);
+
+apiRouter
+  .route("/users")
+  .get(getUsers)
+  .post(postUser);
+
+apiRouter.route("/users/:user_id").get(getUserbyId);
 
 module.exports = apiRouter;

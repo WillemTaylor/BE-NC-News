@@ -95,8 +95,8 @@ describe("/api", () => {
         });
     });
   });
-  describe.only("/articles", () => {
-    xit("GET gives status 200 and serves up an array of articles", () => {
+  describe("/articles", () => {
+    it("GET gives status 200 and serves up an array of articles", () => {
       return request
         .get("/api/articles")
         .expect(200)
@@ -117,7 +117,7 @@ describe("/api", () => {
           expect(+res.body.articles[0].comment_count).to.be.a("Number");
         });
     });
-    xit("POST 201 and a new article object given object data", () => {
+    it("POST 201 and a new article object given object data", () => {
       const newArticle = {
         title: "Making a POST request",
         body:
@@ -134,7 +134,7 @@ describe("/api", () => {
           expect(res.body.articles[0].topic).to.equal(null);
         });
     });
-    xit("GET gives a status 200 and returns an article object given an id number in it's parameter", () => {
+    it("GET gives a status 200 and returns an article object given an id number in it's parameter", () => {
       return request
         .get("/api/articles/1")
         .expect(200)
@@ -172,6 +172,57 @@ describe("/api", () => {
         .then(res => {
           expect(res.status).to.equal(204);
           expect(res.body).to.eql({});
+        });
+    });
+  });
+  describe.only("/users", () => {
+    it("GET returns 200 and returns an array of users", () => {
+      return request
+        .get("/api/users")
+        .expect(200)
+        .then(res => {
+          expect(res.body.users).to.be.an("array");
+          expect(res.body.users[0]).to.contain.keys(
+            "username",
+            "name",
+            "avatar_url"
+          );
+          expect(res.body.users[0].username).to.equal("butter_bridge");
+          expect(res.body.users[0].name).to.equal("jonny");
+          expect(res.body.users[0].avatar_url).to.equal(
+            "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg"
+          );
+        });
+    });
+    it("POST 201 and a new user object given object data", () => {
+      const newUser = {
+        username: "WillyWehWah",
+        name: "Willem Taylor",
+        avatar_url: "https://willemtaylor.com"
+      };
+      return request
+        .post("/api/users")
+        .send(newUser)
+        .expect(201)
+        .then(res => {
+          expect(res.body).to.be.an("object");
+          expect(res.body.users[0]).to.eql(newUser);
+          expect(res.body.users[0].username).to.equal("WillyWehWah");
+          expect(res.body.users[0].name).to.equal("Willem Taylor");
+        });
+    });
+    xit("GET gives a status 200 and returns a user object given an id number in it's parameter", () => {
+      return request
+        .get("/api/users/butter_bridge")
+        .expect(200)
+        .then(res => {
+          expect(res.body).to.have.all.keys("users");
+          expect(res.body.users).to.be.an("array");
+          expect(res.body.users[0].username).to.equal("butter_bridge");
+          expect(res.body.users[0].name).to.equal("jonny");
+          expect(res.body.users[0].avatar_url).to.equal(
+            "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg"
+          );
         });
     });
   });
