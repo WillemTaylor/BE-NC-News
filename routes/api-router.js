@@ -3,7 +3,9 @@ const { getTopics, postTopic } = require("../controllers/topics");
 const {
   getArticles,
   postArticle,
-  getArticlebyId
+  getArticlebyId,
+  patchArticleByIdUpdateVote,
+  deleteArticle
 } = require("../controllers/articles");
 
 apiRouter
@@ -16,6 +18,10 @@ apiRouter
   .get(getArticles)
   .post(postArticle);
 
-apiRouter.route("/articles/:article_id").get(getArticlebyId);
+apiRouter
+  .route("/articles/:article_id")
+  .get(getArticlebyId)
+  .patch(patchArticleByIdUpdateVote)
+  .delete(deleteArticle);
 
 module.exports = apiRouter;

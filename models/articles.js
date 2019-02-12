@@ -23,6 +23,23 @@ exports.fetchArticleById = id => {
     .where("article_id", id);
 };
 
+exports.fetchArticleByIdUpdateVote = (id, newVote) => {
+  return connection
+    .select("*")
+    .from("articles")
+    .where("article_id", id)
+    .update("votes", newVote)
+    .returning("*");
+};
+
+exports.removeArticleById = id => {
+  return connection
+    .select("*")
+    .from("articles")
+    .where("article_id", id)
+    .del("*");
+};
+
 /*
 SELECT house_name, COUNT (wizard_id) AS number_of_wizards
 FROM houses

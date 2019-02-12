@@ -62,7 +62,6 @@ describe("/api", () => {
       );
     });
   });
-
   describe("/topics", () => {
     it("GET gives 200 status and serves up an array of topic objects", () => {
       return request
@@ -97,7 +96,7 @@ describe("/api", () => {
     });
   });
   describe.only("/articles", () => {
-    it("GET gives status 200 and serves up an array of articles", () => {
+    xit("GET gives status 200 and serves up an array of articles", () => {
       return request
         .get("/api/articles")
         .expect(200)
@@ -118,13 +117,11 @@ describe("/api", () => {
           expect(+res.body.articles[0].comment_count).to.be.a("Number");
         });
     });
-    xit("posts a new article object given object data", () => {
+    xit("POST 201 and a new article object given object data", () => {
       const newArticle = {
         title: "Making a POST request",
         body:
-          "Making a post request is easy once you know how. Check out a tutorial here",
-        topic: "coding",
-        author: "WillyWehWah"
+          "Making a post request is easy once you know how. Check out a tutorial here"
       };
       return request
         .post("/api/articles")
@@ -133,8 +130,48 @@ describe("/api", () => {
         .then(res => {
           expect(res.body).to.be.an("object");
           expect(res.body.articles[0].title).to.equal("Making a POST request");
-          expect(res.body.articles[0].author).to.equal(newArticle.topic);
-          expect(res.body.articles[0].topic).to.equal(newArticle.author);
+          expect(res.body.articles[0].author).to.equal(null);
+          expect(res.body.articles[0].topic).to.equal(null);
+        });
+    });
+    xit("GET gives a status 200 and returns an article object given an id number in it's parameter", () => {
+      return request
+        .get("/api/articles/1")
+        .expect(200)
+        .then(res => {
+          expect(res.body).to.have.all.keys("articles");
+          expect(res.body.articles).to.be.an("array");
+          expect(res.body.articles[0].title).to.equal(
+            "Living in the shadow of a great man"
+          );
+          expect(res.body.articles[0].topic).to.equal("mitch");
+        });
+    });
+    xit("PATCH gives a status 200 and returns an article object with an upvoted votes given an article parameter", () => {
+      const newVote = { inc_votes: 1 };
+      const expected = {
+        title: "Living in the shadow of a great man",
+        topic: "mitch",
+        author: "butter_bridge",
+        body: "I find this existence challenging",
+        created_at: "1542284514171",
+        votes: 1
+      };
+      return request
+        .put("/api/articles/1")
+        .expect(200)
+        .then(res => {
+          expect(res.body).to.have.all.keys("article");
+          expect(+res.body.expected.votes).to.eql(101);
+        });
+    });
+    it("DELETE gives a status 204 and deletes the given article by article_id", () => {
+      return request
+        .delete("/api/articles/4")
+        .expect(204)
+        .then(res => {
+          expect(res.status).to.equal(204);
+          expect(res.body).to.eql({});
         });
     });
   });
