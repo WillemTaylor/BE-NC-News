@@ -1,5 +1,30 @@
-{
-  "GET api/topics": "Serves an array of topic objects..."
-}
-
 // in express, theres a thing called send file
+
+{
+ "GET /api/topics": "GET: 200 status and serves an array of topic objects",
+ "POST /api/topics": "POST: 201 status and posts a new topic object when given new object data",
+ "GET /api/articles": "GET: 200 status and serves up an array of article objects",
+ "GET /api/articles?sort_by={column}": "GET: 200 status and serves up an array of article objects, given a sort_by query in a default descending order",
+ "GET /api/articles?sort_by={column}&order=asc": "GET: 200 status and serves up an array of article objects given a sort_by query with ascending order",
+ "GET /api/articles?sort_by": "GET: 200 status and serves up an array of article objects given a sort_by query which will default to created_at when passed no column and in a default descending order",
+ "GET /api/articles?sort_by&order=asc": "GET: 200 status and serves up an array of article objects given a sort_by query which will default to created_at when passed no column and in an ascending order",
+ "GET /api/articles?author={username}": "GET: 200 status and serves up an array of article objects given a filter query on author",
+ "GET /api/articles?topic={topic}": "GET: 200 status and serves up an array of article objects given a filter query on topic",
+ "POST /api/articles": "POST: 201 status and serves up a new article object given new object data",
+ "POST /api/articles": "POST: 400 status and responds with an error message when given insufficient information",
+ "GET /api/articles/article_id": "GET: 200 status and serves up an article object given an id number",
+ "GET /api/articles/article_id": "GET: 404 status and responds with an error message when given an id that doesn't exist",
+ "PATCH /api/articles/article_id": "PATCH: 202 status and serves up an article object with updated votes given an article id",
+ "DELETE /api/articles/article_id": "DELETE: 204 status and deletes the given article by article id",
+ "GET /api/articles/article_id/comments": "GET: 200 status and serves up an array of comment objects for the given article id",
+ "GET /api/articles/article_id/comments?sort_by={column}": "GET: 200 status and serves up an array of article objects given a sort_by query and in a default descending order",
+ "GET /api/articles/article_id/comments?sort_by={column}&order=asc": "GET: 200 status and serves up an array of article objects given a sort_by query and in an ascending order",
+ "GET /api/articles/article_id/comments?sort_by": "GET: 200 status and serves up an array of article objects given a sort_by query which defaults to created_at when passed no column and in a default descending order",
+ "GET /api/articles/article_id/comments?sort_by&order=asc": "GET: 200 status and serves up an array of article objects given a sort_by query which defaults to created_at when passed no column and in an ascending order",
+ "POST /api/articles/article_id/comments": "POST: 201 status and posts a new comment object given a new comment",
+ "PATCH /api/comments/comment_id": "PATCH: 202 status and serves up a comment object with an upvoted votes given a comment id",
+ "DELETE /api/comments/comment_id": "DELETE: 204 status and deletes the given comment by comment id",
+ "GET /api/users": "GET: 200 status and serves up an array of users objects",
+ "POST /api/users": "POST: 201 status and serves up a new user object given new object data",
+ "GET /api/users/:username": "GET: 200 status and serves up a user object given a username"
+}

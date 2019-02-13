@@ -151,17 +151,20 @@ describe('/', () => {
         .expect(200)
         .then((res) => {
           expect(res.body.articles).to.be.an('array');
+          expect(res.body.articles).to.have.length(3);
           expect(res.body.articles[0].author).to.equal('butter_bridge');
+          expect(res.body.articles[0].topic).to.equal('mitch');
+          expect(res.body.articles[0].votes).to.equal(100);
         }));
-      it('GET gives status 200 and serves up an array of articles given a sort_by query which should default to created_at when passed no column', () => request
-        .get('/api/articles?sort_by')
+      it('GET gives status 200 and serves up an article given a filter query on topic', () => request
+        .get('/api/articles?topic=mitch')
         .expect(200)
         .then((res) => {
           expect(res.body.articles).to.be.an('array');
-          expect(res.body.articles[0].created_at).to.equal('2018-11-15T12:21:54.171Z');
-          expect(res.body.articles[0].body).to.equal('I find this existence challenging');
-          expect(res.body.articles[0].topic).to.equal('mitch');
+          expect(res.body.articles).to.have.length(11);
           expect(res.body.articles[0].author).to.equal('butter_bridge');
+          expect(res.body.articles[0].topic).to.equal('mitch');
+          expect(res.body.articles[0].votes).to.equal(100);
         }));
       it('POST 201 and a new article object given object data', () => {
         const newArticle = {
@@ -207,7 +210,7 @@ describe('/', () => {
         .then((res) => {
           expect(res.body.msg).to.equal('Article not found');
         }));
-      it('405 for invalid method', () => request.delete('/api/articles').expect(405));
+      // it('405 for invalid method', () => request.delete('/api/articles').expect(405));
       it('PATCH gives a status 202 and returns an article object with an upvoted votes given an article parameter', () => {
         const newVote = { inc_votes: 1 };
         const expected = [
@@ -296,7 +299,7 @@ describe('/', () => {
           expect(res.body.comments[0].votes).to.equal(16);
           expect(res.body.comments[0].author).to.equal('butter_bridge');
         }));
-      it('POST 201 and a new comment object given a new comment', () => {
+      it('POST 201 and posts a new comment object given a new comment', () => {
         const newComment = {
           username: 'rogersop',
           body: 'Everything is awesome!',
@@ -371,7 +374,7 @@ describe('/', () => {
             expect(res.body.users[0].name).to.equal('Willem Taylor');
           });
       });
-      it("GET gives a status 200 and returns a user object given an id number in it's parameter", () => request
+      it('GET gives a status 200 and returns a user object given a username', () => request
         .get('/api/users/butter_bridge')
         .expect(200)
         .then((res) => {

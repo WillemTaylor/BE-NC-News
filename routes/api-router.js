@@ -14,6 +14,7 @@ const {
   deleteComment,
 } = require('../controllers/comments');
 const { getUsers, postUser, getUserbyId } = require('../controllers/users');
+const { sendRoutes } = require('../app');
 const { handle405 } = require('../errors/index');
 
 apiRouter
@@ -49,5 +50,7 @@ apiRouter
   .post(postUser);
 
 apiRouter.route('/users/:user_id').get(getUserbyId);
+
+apiRouter.route('/').get(sendRoutes);
 
 module.exports = apiRouter;
