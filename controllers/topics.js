@@ -5,7 +5,7 @@ exports.getTopics = (req, res, next) => {
     .then(topics => {
       res.status(200).send({ topics });
     })
-    .catch(console.log);
+    .catch(next);
 };
 
 exports.postTopic = (req, res, next) => {
@@ -14,5 +14,5 @@ exports.postTopic = (req, res, next) => {
     .then(topics => {
       res.status(201).send({ topics });
     })
-    .catch(console.log);
+    .catch(next);
 };

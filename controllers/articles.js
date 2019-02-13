@@ -8,40 +8,43 @@ const {
 
 exports.getArticles = (req, res, next) => {
   const { sortBy, order, ...whereClauses } = req.query;
-  fetchArticles(sortBy, order, whereClauses)
+  const conditions = {};
+  //if (sortBy, order, ...whereClauses) conditions.sortBy = sortBy
+  fetchArticles(sortBy, order, whereClauses) //conditions
     .then(articles => {
       res.status(200).send({ articles });
     })
-    .catch(console.log);
+    .catch(next);
 };
 
 exports.postArticle = (req, res, next) => {
   const newArticle = req.body;
   insertArticle(newArticle)
-    .then(articles => {
+    .then(([articles]) => {
       res.status(201).send({ articles });
     })
-    .catch(console.log);
+    .catch(next);
 };
 
 exports.getArticlebyId = (req, res, next) => {
   const articleById = req.params.article_id;
   fetchArticleById(articleById)
     .then(articles => {
-      res.status(200).send({ articles });
+      console.log(articles);
+      if (![]) return res.status(200).send({ articles });
+      else return Promise.reject({ status: 404, msg: "Article not found" });
     })
-    .catch(console.log);
+    .catch(next);
 };
 
 exports.patchArticleByIdUpdateVote = (req, res, next) => {
   const articleById = req.params.article_id;
-  const updatedVote = { inc_votes: req.body };
+  const updatedVote = req.body.inc_votes;
   fetchArticleByIdUpdateVote(articleById, updatedVote)
     .then(article => {
-      console.log(newVote);
-      res.status(200).send({ article });
+      res.status(202).send({ article });
     })
-    .catch(console.log);
+    .catch(next);
 };
 
 exports.deleteArticle = (req, res) => {
@@ -50,5 +53,5 @@ exports.deleteArticle = (req, res) => {
     .then(msg => {
       res.status(204).send({ msg });
     })
-    .catch(console.log);
+    .catch(next);
 };

@@ -1,5 +1,5 @@
 const connection = require("../db/connection");
-
+//{ conditions = {} }
 exports.fetchArticles = (sortBy, order, whereClauses) => {
   return connection
     .select("*")
@@ -28,7 +28,7 @@ exports.fetchArticleByIdUpdateVote = (id, newVote) => {
     .select("*")
     .from("articles")
     .where("article_id", id)
-    .update("votes", newVote)
+    .increment("votes", newVote)
     .returning("*");
 };
 
