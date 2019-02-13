@@ -1,9 +1,10 @@
 const connection = require('../db/connection');
 
-exports.fetchCommentsbyId = id => connection
+exports.fetchCommentsbyId = (sort_by, order, id) => connection
   .select('*')
   .from('comments')
-  .where('article_id', id);
+  .where('article_id', id)
+  .orderBy(sort_by || 'created_at', order || 'desc');
 
 exports.insertCommentByArticleId = (id, comment) => {
   const { username, body } = comment;

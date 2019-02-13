@@ -6,10 +6,7 @@ const {
   topicData, userData, articleData, commentData,
 } = require('../db/data');
 const {
-  dateRef,
-  dateRef1,
-  createRef,
-  formatComments,
+  dateRef, dateRef1, createRef, formatComments,
 } = require('../db/utils/index');
 const connection = require('../db/connection');
 
@@ -30,18 +27,10 @@ describe('/', () => {
 
     describe('Tables', () => {
       it('returns a created_at value in the correct format (ie. converted from a timestamp to date format', () => {
-        expect(dateRef(articleData)[0].created_at).to.equal(
-          '2018-11-15T12:21:54.171Z',
-        );
+        expect(dateRef(articleData)[0].created_at).to.equal('2018-11-15T12:21:54.171Z');
       });
       it('returns an array of keys within the articleData table', () => {
-        expect(articleData[0]).to.contain.keys(
-          'title',
-          'topic',
-          'author',
-          'body',
-          'created_at',
-        );
+        expect(articleData[0]).to.contain.keys('title', 'topic', 'author', 'body', 'created_at');
       });
       it('Table returns an array of objects', () => {
         expect(topicData).to.be.an('array');
@@ -67,9 +56,7 @@ describe('/', () => {
           'created_at',
         );
         it('returns a created_at value in the correct format (ie. converted from a timestamp to date format', () => {
-          expect(dateRef1(commentData)[0].created_at).to.equal(
-            '2016-07-09T18:07:18.932Z',
-          );
+          expect(dateRef1(commentData)[0].created_at).to.equal('2016-07-09T18:07:18.932Z');
         });
       });
     });
@@ -81,9 +68,7 @@ describe('/', () => {
           expect(res.body.topics).to.be.an('array');
           expect(res.body.topics[0]).to.contain.keys('description', 'slug');
           expect(res.body.topics[0].slug).to.equal('mitch');
-          expect(res.body.topics[0].description).to.equal(
-            'The man, the Mitch, the legend',
-          );
+          expect(res.body.topics[0].description).to.equal('The man, the Mitch, the legend');
         }));
       it('POST 201 posts a new topic object given object data', () => {
         const newTopic = {
@@ -119,8 +104,8 @@ describe('/', () => {
             'votes',
           );
         }));
-      it('GET gives status 200 and serves up an array of articles given a sortBy query with default descending order', () => request
-        .get('/api/articles?sortBy=title')
+      it('GET gives status 200 and serves up an array of articles given a sort_by query with default descending order', () => request
+        .get('/api/articles?sort_by=title')
         .expect(200)
         .then((res) => {
           expect(res.body.articles).to.be.an('array');
@@ -129,68 +114,52 @@ describe('/', () => {
           expect(res.body.articles[0].topic).to.equal('mitch');
           expect(res.body.articles[0].author).to.equal('icellusedkars');
         }));
-      it('GET gives status 200 and serves up an array of articles given a sortBy query with ascending order', () => request
-        .get('/api/articles?sortBy=title&order=asc')
+      it('GET gives status 200 and serves up an array of articles given a sort_by query with ascending order', () => request
+        .get('/api/articles?sort_by=title&order=asc')
         .expect(200)
         .then((res) => {
           expect(res.body.articles).to.be.an('array');
           expect(res.body.articles[0].title).to.equal('A');
-          expect(res.body.articles[0].body).to.equal(
-            'Delicious tin of cat food',
-          );
+          expect(res.body.articles[0].body).to.equal('Delicious tin of cat food');
           expect(res.body.articles[0].topic).to.equal('mitch');
           expect(res.body.articles[0].author).to.equal('icellusedkars');
-          expect(res.body.articles[0].created_at).to.equal(
-            '1998-11-20T12:21:54.171Z',
-          );
+          expect(res.body.articles[0].created_at).to.equal('1998-11-20T12:21:54.171Z');
         }));
-      it('GET gives status 200 and serves up an array of articles given a sortBy query which should default to created_at when passed no column with default descending order', () => request
-        .get('/api/articles?sortBy')
+      it('GET gives status 200 and serves up an array of articles given a sort_by query which should default to created_at when passed no column with default descending order', () => request
+        .get('/api/articles?sort_by')
         .expect(200)
         .then((res) => {
           expect(res.body.articles).to.be.an('array');
-          expect(res.body.articles[0].created_at).to.equal(
-            '2018-11-15T12:21:54.171Z',
-          );
-          expect(res.body.articles[0].body).to.equal(
-            'I find this existence challenging',
-          );
+          expect(res.body.articles[0].created_at).to.equal('2018-11-15T12:21:54.171Z');
+          expect(res.body.articles[0].body).to.equal('I find this existence challenging');
           expect(res.body.articles[0].topic).to.equal('mitch');
           expect(res.body.articles[0].author).to.equal('butter_bridge');
         }));
-      it('GET gives status 200 and serves up an array of articles given a sortBy query which should default to created_at when passed no column with ascending order', () => request
-        .get('/api/articles?sortBy&order=asc')
+      it('GET gives status 200 and serves up an array of articles given a sort_by query which should default to created_at when passed no column with ascending order', () => request
+        .get('/api/articles?sort_by&order=asc')
         .expect(200)
         .then((res) => {
           expect(res.body.articles).to.be.an('array');
-          expect(res.body.articles[0].created_at).to.equal(
-            '1974-11-26T12:21:54.171Z',
-          );
-          expect(res.body.articles[0].body).to.equal(
-            'Have you seen the size of that thing?',
-          );
+          expect(res.body.articles[0].created_at).to.equal('1974-11-26T12:21:54.171Z');
+          expect(res.body.articles[0].body).to.equal('Have you seen the size of that thing?');
           expect(res.body.articles[0].topic).to.equal('mitch');
           expect(res.body.articles[0].title).to.equal('Moustache');
           expect(res.body.articles[0].author).to.equal('butter_bridge');
         }));
-      it('GET gives status 200 and serves up an article given a a filter query on author', () => request
+      it('GET gives status 200 and serves up an article given a filter query on author', () => request
         .get('/api/articles?author=butter_bridge')
         .expect(200)
         .then((res) => {
           expect(res.body.articles).to.be.an('array');
           expect(res.body.articles[0].author).to.equal('butter_bridge');
         }));
-      it('GET gives status 200 and serves up an array of articles given a sortBy query which should default to created_at when passed no column', () => request
-        .get('/api/articles?sortBy')
+      it('GET gives status 200 and serves up an array of articles given a sort_by query which should default to created_at when passed no column', () => request
+        .get('/api/articles?sort_by')
         .expect(200)
         .then((res) => {
           expect(res.body.articles).to.be.an('array');
-          expect(res.body.articles[0].created_at).to.equal(
-            '2018-11-15T12:21:54.171Z',
-          );
-          expect(res.body.articles[0].body).to.equal(
-            'I find this existence challenging',
-          );
+          expect(res.body.articles[0].created_at).to.equal('2018-11-15T12:21:54.171Z');
+          expect(res.body.articles[0].body).to.equal('I find this existence challenging');
           expect(res.body.articles[0].topic).to.equal('mitch');
           expect(res.body.articles[0].author).to.equal('butter_bridge');
         }));
@@ -229,9 +198,7 @@ describe('/', () => {
         .then((res) => {
           expect(res.body).to.have.all.keys('article');
           expect(res.body.article).to.be.an('object');
-          expect(res.body.article.title).to.equal(
-            'Living in the shadow of a great man',
-          );
+          expect(res.body.article.title).to.equal('Living in the shadow of a great man');
           expect(res.body.article.topic).to.equal('mitch');
         }));
       it("GET 404 when given an id that doesn't exist", () => request
@@ -267,9 +234,9 @@ describe('/', () => {
         .delete('/api/articles/1')
         .expect(204)
         .then(() => request.get('/api/articles').then((res) => {
-          expect(
-            res.body.articles.find(article => article.article_id === 1),
-          ).to.equal(undefined);
+          expect(res.body.articles.find(article => article.article_id === 1)).to.equal(
+            undefined,
+          );
         })));
     });
     describe('/comments', () => {
@@ -281,9 +248,53 @@ describe('/', () => {
           expect(res.body.comments.length).to.equal(13);
           expect(res.body.comments[1].votes).to.equal(100);
           expect(res.body.comments[1].author).to.equal('icellusedkars');
-          expect(res.body.comments[1].created_at).to.equal(
-            '2015-11-23T12:36:03.389Z',
+          expect(res.body.comments[1].created_at).to.equal('2015-11-23T12:36:03.389Z');
+        }));
+      it('GET gives status 200 and serves up an array of articles given a sort_by query with default descending order', () => request
+        .get('/api/articles/1/comments?sort_by=votes')
+        .expect(200)
+        .then((res) => {
+          expect(res.body.comments).to.be.an('array');
+          expect(res.body.comments[0].votes).to.equal(100);
+          expect(res.body.comments[0].body).to.equal(
+            'Replacing the quiet elegance of the dark suit and tie with the casual indifference of these muted earth tones is a form of fashion suicide, but, uh, call me crazy — onyou it works.',
           );
+          expect(res.body.comments[0].author).to.equal('icellusedkars');
+        }));
+      it('GET gives status 200 and serves up an array of articles given a sort_by query with ascending order', () => request
+        .get('/api/articles/1/comments?sort_by=votes&order=asc')
+        .expect(200)
+        .then((res) => {
+          expect(res.body.comments).to.be.an('array');
+          expect(res.body.comments[0].votes).to.equal(-100);
+          expect(res.body.comments[0].body).to.equal(
+            ' I carry a log — yes. Is it funny to you? It is not to me.',
+          );
+          expect(res.body.comments[0].author).to.equal('icellusedkars');
+        }));
+      it('GET gives status 200 and serves up an array of articles given a sort_by query which should default to created_at when passed no column and with default descending order', () => request
+        .get('/api/articles/1/comments?sort_by')
+        .expect(200)
+        .then((res) => {
+          expect(res.body.comments).to.be.an('array');
+          expect(res.body.comments[0].created_at).to.equal('2016-11-22T12:36:03.389Z');
+          expect(res.body.comments[0].body).to.equal(
+            'The beautiful thing about treasure is that it exists. Got to find out what kind of sheets these are; not cotton, not rayon, silky.',
+          );
+          expect(res.body.comments[0].votes).to.equal(14);
+          expect(res.body.comments[0].author).to.equal('butter_bridge');
+        }));
+      it('GET gives status 200 and serves up an array of articles given a sort_by query which should default to created_at when passed no column and with an ascending order', () => request
+        .get('/api/articles/1/comments?sort_by&order=asc')
+        .expect(200)
+        .then((res) => {
+          expect(res.body.comments).to.be.an('array');
+          expect(res.body.comments[0].created_at).to.equal('2000-11-26T12:36:03.389Z');
+          expect(res.body.comments[0].body).to.equal(
+            'This morning, I showered for nine minutes.',
+          );
+          expect(res.body.comments[0].votes).to.equal(16);
+          expect(res.body.comments[0].author).to.equal('butter_bridge');
         }));
       it('POST 201 and a new comment object given a new comment', () => {
         const newComment = {
@@ -327,9 +338,7 @@ describe('/', () => {
         .delete('/api/comments/1')
         .expect(204)
         .then(() => request.get('/api/comments').then((res) => {
-          expect(
-            commentData.find(comment => comment.comment_id === 1),
-          ).to.equal(undefined);
+          expect(commentData.find(comment => comment.comment_id === 1)).to.equal(undefined);
         })));
     });
     describe('/users', () => {
@@ -338,11 +347,7 @@ describe('/', () => {
         .expect(200)
         .then((res) => {
           expect(res.body.users).to.be.an('array');
-          expect(res.body.users[0]).to.contain.keys(
-            'username',
-            'name',
-            'avatar_url',
-          );
+          expect(res.body.users[0]).to.contain.keys('username', 'name', 'avatar_url');
           expect(res.body.users[0].username).to.equal('butter_bridge');
           expect(res.body.users[0].name).to.equal('jonny');
           expect(res.body.users[0].avatar_url).to.equal(

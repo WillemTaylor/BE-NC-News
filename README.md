@@ -75,14 +75,14 @@ Your server should have the following end-points:
 ✔️ GET /api/topics
 ✔️ POST /api/topics
 
----> GET /api/articles
+v GET /api/articles
 ✔️ POST /api/articles
 
----> GET /api/articles/:article_id
+v GET /api/articles/:article_id
 ✔️ PATCH /api/articles/:article_id
 ✔️ DELETE /api/articles/:article_id
 
----> GET /api/articles/:article_id/comments
+v GET /api/articles/:article_id/comments
 ✔️ POST /api/articles/:article_id/comments
 
 ✔️ PATCH /api/comments/:comment_id

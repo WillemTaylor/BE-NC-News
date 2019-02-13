@@ -1,12 +1,12 @@
 const connection = require('../db/connection');
 
-exports.fetchArticles = (sortBy, order, whereClauses) => connection
+exports.fetchArticles = (sort_by, order, whereClauses) => connection
   .select('*')
   .from('articles')
   .groupBy('articles.article_id')
   .count('body as comment_count')
   .where(whereClauses)
-  .orderBy(sortBy || 'created_at', order || 'desc');
+  .orderBy(sort_by || 'created_at', order || 'desc');
 
 exports.insertArticle = article => connection('articles')
   .insert(article)

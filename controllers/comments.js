@@ -7,7 +7,8 @@ const {
 
 exports.getCommentsbyId = (req, res, next) => {
   const articleById = req.params.article_id;
-  fetchCommentsbyId(articleById)
+  const { sort_by, order } = req.query;
+  fetchCommentsbyId(sort_by, order, articleById)
     .then((comments) => {
       res.status(200).send({ comments });
     })
