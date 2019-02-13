@@ -1,44 +1,34 @@
-const connection = require("../db/connection");
-//{ conditions = {} }
-exports.fetchArticles = (sortBy, order, whereClauses) => {
-  return connection
-    .select("*")
-    .from("articles")
-    .groupBy("articles.article_id")
-    .count("body as comment_count");
-  //.where(whereClauses)
-  //.orderBy(sortBy, order || "asc");
-};
+const connection = require('../db/connection');
 
-exports.insertArticle = article => {
-  return connection("articles")
-    .insert(article)
-    .returning("*");
-};
+exports.fetchArticles = (sortBy, order, whereClauses) => connection
+  .select('*')
+  .from('articles')
+  .groupBy('articles.article_id')
+  .count('body as comment_count')
+  .where(whereClauses)
+  .orderBy(sortBy || 'created_at', order || 'desc');
 
-exports.fetchArticleById = id => {
-  return connection
-    .select("*")
-    .from("articles")
-    .where("article_id", id);
-};
+exports.insertArticle = article => connection('articles')
+  .insert(article)
+  .returning('*');
 
-exports.fetchArticleByIdUpdateVote = (id, newVote) => {
-  return connection
-    .select("*")
-    .from("articles")
-    .where("article_id", id)
-    .increment("votes", newVote)
-    .returning("*");
-};
+exports.fetchArticleById = id => connection
+  .select('*')
+  .from('articles')
+  .where('article_id', id);
 
-exports.removeArticleById = id => {
-  return connection
-    .select("*")
-    .from("articles")
-    .where("article_id", id)
-    .del("*");
-};
+exports.fetchArticleByIdUpdateVote = (id, newVote) => connection
+  .select('*')
+  .from('articles')
+  .where('article_id', id)
+  .increment('votes', newVote)
+  .returning('*');
+
+exports.removeArticleById = id => connection
+  .select('*')
+  .from('articles')
+  .where('article_id', id)
+  .del('*');
 
 /*
 SELECT house_name, COUNT (wizard_id) AS number_of_wizards

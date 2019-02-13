@@ -1,18 +1,12 @@
-const connection = require("../db/connection");
+const connection = require('../db/connection');
 
-exports.fetchUsers = () => {
-  return connection.select("*").from("users");
-};
+exports.fetchUsers = () => connection.select('*').from('users');
 
-exports.insertUser = users => {
-  return connection("users")
-    .insert(users)
-    .returning("*");
-};
+exports.insertUser = users => connection('users')
+  .insert(users)
+  .returning('*');
 
-exports.fetchUserById = username => {
-  return connection
-    .select("*")
-    .from("users")
-    .where("username", username);
-};
+exports.fetchUserById = username => connection
+  .select('*')
+  .from('users')
+  .where('username', username);

@@ -1,11 +1,7 @@
-const connection = require("../db/connection");
+const connection = require('../db/connection');
 
-exports.fetchTopics = () => {
-  return connection.select("*").from("topics");
-};
+exports.fetchTopics = () => connection.select('*').from('topics');
 
-exports.insertTopic = topic => {
-  return connection("topics")
-    .insert(topic)
-    .returning("*");
-};
+exports.insertTopic = topic => connection('topics')
+  .insert(topic)
+  .returning('*');

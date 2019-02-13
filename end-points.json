@@ -1,0 +1,5 @@
+{
+  "GET api/topics": "Serves an array of topic objects..."
+}
+
+// in express, theres a thing called send file
