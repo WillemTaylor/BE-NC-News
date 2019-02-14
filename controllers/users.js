@@ -21,7 +21,8 @@ exports.getUserbyId = (req, res, next) => {
   const userById = req.params.user_id;
   fetchUserById(userById)
     .then(([users]) => {
-      res.status(200).send({ users });
+      if (users) { return res.status(200).send({ users }); }
+      return Promise.reject({ status: 404, msg: "user doesn't exist" });
     })
     .catch(next);
 };

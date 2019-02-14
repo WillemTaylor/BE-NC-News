@@ -1,6 +1,7 @@
 exports.handle400 = (err, req, res, next) => {
   const badRequestCodes = {
     23502: 'violates not null violation',
+    '22P02': 'Bad request: invalid input',
   };
   if (badRequestCodes[err.code]) res.status(400).send({ msg: badRequestCodes[err.code] });
   else next(err);

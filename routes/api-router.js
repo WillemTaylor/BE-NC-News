@@ -20,7 +20,8 @@ const { handle405 } = require('../errors/index');
 apiRouter
   .route('/topics')
   .get(getTopics)
-  .post(postTopic);
+  .post(postTopic)
+  .all(handle405);
 
 apiRouter
   .route('/articles')
@@ -32,24 +33,28 @@ apiRouter
   .route('/articles/:article_id')
   .get(getArticlebyId)
   .patch(patchArticleByIdUpdateVote)
-  .delete(deleteArticle);
+  .delete(deleteArticle)
+  .all(handle405);
 
 apiRouter
   .route('/articles/:article_id/comments')
   .get(getCommentsbyId)
-  .post(postCommentById);
+  .post(postCommentById)
+  .all(handle405);
 
 apiRouter
   .route('/comments/:comment_id')
   .patch(patchCommentByIdUpdateVote)
-  .delete(deleteComment);
+  .delete(deleteComment)
+  .all(handle405);
 
 apiRouter
   .route('/users')
   .get(getUsers)
-  .post(postUser);
+  .post(postUser)
+  .all(handle405);
 
-apiRouter.route('/users/:user_id').get(getUserbyId);
+apiRouter.route('/users/:user_id').get(getUserbyId).all(handle405);
 
 apiRouter.route('/').get(sendRoutes);
 

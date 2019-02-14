@@ -8,9 +8,8 @@ const {
 
 exports.getArticles = (req, res, next) => {
   const { sort_by, order, ...whereClauses } = req.query;
-
   fetchArticles(sort_by, order, whereClauses)
-    .then(([articles]) => {
+    .then((articles) => {
       if (articles) return res.status(200).send({ articles });
       return Promise.reject({ status: 404, msg: 'Articles not found' });
     })
@@ -20,8 +19,8 @@ exports.getArticles = (req, res, next) => {
 exports.postArticle = (req, res, next) => {
   const newArticle = req.body;
   insertArticle(newArticle)
-    .then(([articles]) => {
-      res.status(201).send({ articles });
+    .then(([article]) => {
+      res.status(201).send({ article });
     })
     .catch(next);
 };
