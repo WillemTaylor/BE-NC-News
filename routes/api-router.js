@@ -14,7 +14,7 @@ const {
   deleteComment,
 } = require('../controllers/comments');
 const { getUsers, postUser, getUserbyId } = require('../controllers/users');
-const { sendRoutes } = require('../app');
+const { sendRoutes } = require('../end-points');
 const { handle405 } = require('../errors/index');
 
 apiRouter

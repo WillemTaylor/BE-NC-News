@@ -25,6 +25,8 @@ describe('/', () => {
 
     after(() => connection.destroy());
 
+    it('');
+
     describe('Tables', () => {
       it('returns a created_at value in the correct format (ie. converted from a timestamp to date format', () => {
         expect(dateRef(articleData)[0].created_at).to.equal('2018-11-15T12:21:54.171Z');
@@ -88,14 +90,30 @@ describe('/', () => {
             );
           });
       });
+      it('POST 400 when given insufficient information', () => {
+        const newTopic = {};
+        return request
+          .post('/api/topics')
+          .send(newTopic)
+          .expect(400)
+          .then((res) => {
+            expect(res.body.msg).to.equal('violates not null violation');
+          });
+      });
+      it("404 when the route doesn't exist", () => request
+        .get('/api/topics/1')
+        .expect(404)
+        .then((res) => {
+          expect(res.body.msg).to.equal('Page not found');
+        }));
     });
     describe('/articles', () => {
       it('GET gives status 200 and serves up an array of articles', () => request
         .get('/api/articles')
         .expect(200)
         .then((res) => {
-          expect(res.body.articles).to.be.an('array');
-          expect(res.body.articles[0]).to.contain.keys(
+          expect(res.body.articles).to.be.an('object');
+          expect(res.body.articles).to.contain.keys(
             'author',
             'title',
             'article_id',
@@ -108,63 +126,73 @@ describe('/', () => {
         .get('/api/articles?sort_by=title')
         .expect(200)
         .then((res) => {
-          expect(res.body.articles).to.be.an('array');
-          expect(res.body.articles[0].title).to.equal('Z');
-          expect(res.body.articles[0].body).to.equal('I was hungry.');
-          expect(res.body.articles[0].topic).to.equal('mitch');
-          expect(res.body.articles[0].author).to.equal('icellusedkars');
+          expect(res.body.articles).to.be.an('object');
+          expect(res.body.articles.title).to.equal('Z');
+          expect(res.body.articles.body).to.equal('I was hungry.');
+          expect(res.body.articles.topic).to.equal('mitch');
+          expect(res.body.articles.author).to.equal('icellusedkars');
+        }));
+      it("404 when sorting by a route which doesn't exist", () => request
+        .get('/api/articles?sort_by=abc')
+        .expect(404)
+        .then((res) => {
+          expect(res.body.msg).to.equal('Not found');
         }));
       it('GET gives status 200 and serves up an array of articles given a sort_by query with ascending order', () => request
         .get('/api/articles?sort_by=title&order=asc')
         .expect(200)
         .then((res) => {
-          expect(res.body.articles).to.be.an('array');
-          expect(res.body.articles[0].title).to.equal('A');
-          expect(res.body.articles[0].body).to.equal('Delicious tin of cat food');
-          expect(res.body.articles[0].topic).to.equal('mitch');
-          expect(res.body.articles[0].author).to.equal('icellusedkars');
-          expect(res.body.articles[0].created_at).to.equal('1998-11-20T12:21:54.171Z');
+          expect(res.body.articles).to.be.an('object');
+          expect(res.body.articles.title).to.equal('A');
+          expect(res.body.articles.body).to.equal('Delicious tin of cat food');
+          expect(res.body.articles.topic).to.equal('mitch');
+          expect(res.body.articles.author).to.equal('icellusedkars');
+          expect(res.body.articles.created_at).to.equal('1998-11-20T12:21:54.171Z');
         }));
       it('GET gives status 200 and serves up an array of articles given a sort_by query which should default to created_at when passed no column with default descending order', () => request
         .get('/api/articles?sort_by')
         .expect(200)
         .then((res) => {
-          expect(res.body.articles).to.be.an('array');
-          expect(res.body.articles[0].created_at).to.equal('2018-11-15T12:21:54.171Z');
-          expect(res.body.articles[0].body).to.equal('I find this existence challenging');
-          expect(res.body.articles[0].topic).to.equal('mitch');
-          expect(res.body.articles[0].author).to.equal('butter_bridge');
+          expect(res.body.articles).to.be.an('object');
+          expect(res.body.articles.created_at).to.equal('2018-11-15T12:21:54.171Z');
+          expect(res.body.articles.body).to.equal('I find this existence challenging');
+          expect(res.body.articles.topic).to.equal('mitch');
+          expect(res.body.articles.author).to.equal('butter_bridge');
         }));
       it('GET gives status 200 and serves up an array of articles given a sort_by query which should default to created_at when passed no column with ascending order', () => request
         .get('/api/articles?sort_by&order=asc')
         .expect(200)
         .then((res) => {
-          expect(res.body.articles).to.be.an('array');
-          expect(res.body.articles[0].created_at).to.equal('1974-11-26T12:21:54.171Z');
-          expect(res.body.articles[0].body).to.equal('Have you seen the size of that thing?');
-          expect(res.body.articles[0].topic).to.equal('mitch');
-          expect(res.body.articles[0].title).to.equal('Moustache');
-          expect(res.body.articles[0].author).to.equal('butter_bridge');
+          expect(res.body.articles).to.be.an('object');
+          expect(res.body.articles.created_at).to.equal('1974-11-26T12:21:54.171Z');
+          expect(res.body.articles.body).to.equal('Have you seen the size of that thing?');
+          expect(res.body.articles.topic).to.equal('mitch');
+          expect(res.body.articles.title).to.equal('Moustache');
+          expect(res.body.articles.author).to.equal('butter_bridge');
         }));
       it('GET gives status 200 and serves up an article given a filter query on author', () => request
         .get('/api/articles?author=butter_bridge')
         .expect(200)
         .then((res) => {
-          expect(res.body.articles).to.be.an('array');
-          expect(res.body.articles).to.have.length(3);
-          expect(res.body.articles[0].author).to.equal('butter_bridge');
-          expect(res.body.articles[0].topic).to.equal('mitch');
-          expect(res.body.articles[0].votes).to.equal(100);
+          expect(res.body.articles).to.be.an('object');
+          expect(res.body.articles.author).to.equal('butter_bridge');
+          expect(res.body.articles.topic).to.equal('mitch');
+          expect(res.body.articles.votes).to.equal(100);
+        }));
+      it("404 when sorting by a route parameter which doesn't exist", () => request
+        .get('/api/articles?votes=12')
+        .expect(404)
+        .then((res) => {
+          expect(res.body.msg).to.equal('Articles not found');
         }));
       it('GET gives status 200 and serves up an article given a filter query on topic', () => request
         .get('/api/articles?topic=mitch')
         .expect(200)
         .then((res) => {
-          expect(res.body.articles).to.be.an('array');
-          expect(res.body.articles).to.have.length(11);
-          expect(res.body.articles[0].author).to.equal('butter_bridge');
-          expect(res.body.articles[0].topic).to.equal('mitch');
-          expect(res.body.articles[0].votes).to.equal(100);
+          expect(res.body.articles).to.be.an('object');
+          expect(res.body.articles.author).to.equal('butter_bridge');
+          expect(res.body.articles.topic).to.equal('mitch');
+          expect(res.body.articles.votes).to.equal(100);
         }));
       it('POST 201 and a new article object given object data', () => {
         const newArticle = {
@@ -195,6 +223,12 @@ describe('/', () => {
             expect(res.body.msg).to.equal('violates not null violation');
           });
       });
+      it('404 for invalid when trying to POST given an article id', () => request
+        .post('/api/articles/1')
+        .expect(404)
+        .then((res) => {
+          expect(res.body.msg).to.equal('Page not found');
+        }));
       it("GET gives a status 200 and returns an article object given an id number in it's parameter", () => request
         .get('/api/articles/1')
         .expect(200)
@@ -210,7 +244,6 @@ describe('/', () => {
         .then((res) => {
           expect(res.body.msg).to.equal('Article not found');
         }));
-      // it('405 for invalid method', () => request.delete('/api/articles').expect(405));
       it('PATCH gives a status 202 and returns an article object with an upvoted votes given an article parameter', () => {
         const newVote = { inc_votes: 1 };
         const expected = [
@@ -233,14 +266,50 @@ describe('/', () => {
             expect(res.body.article).to.eql(expected);
           });
       });
+      it('PATCH gives a status 202 and returns an article object with a downvoted vote given a negative article parameter', () => {
+        const newVote = { inc_votes: -1 };
+        const expected = [
+          {
+            article_id: 1,
+            title: 'Living in the shadow of a great man',
+            topic: 'mitch',
+            author: 'butter_bridge',
+            body: 'I find this existence challenging',
+            created_at: '2018-11-15T12:21:54.171Z',
+            votes: 99,
+          },
+        ];
+        return request
+          .patch('/api/articles/1')
+          .send(newVote)
+          .expect(202)
+          .then((res) => {
+            expect(res.body).to.have.all.keys('article');
+            expect(res.body.article).to.eql(expected);
+          });
+      });
+      it('404 for invalid method when trying to make a PATCH request without correct information', () => {
+        const newDesc = 'This is a test';
+        return request
+          .patch('/api/articles/1')
+          .send(newDesc)
+          .expect(404)
+          .then((res) => {
+            expect(res.body.msg).to.equal("Article couldn't be updated");
+          });
+      });
       it('DELETE gives a status 204 and deletes the given article by article_id', () => request
         .delete('/api/articles/1')
         .expect(204)
         .then(() => request.get('/api/articles').then((res) => {
-          expect(res.body.articles.find(article => article.article_id === 1)).to.equal(
-            undefined,
-          );
+          expect(articleData.find(article => article.article_id === 1)).to.equal(undefined);
         })));
+      it('405 for invalid method', () => request
+        .delete('/api/articles')
+        .expect(405)
+        .then((res) => {
+          expect(res.body.msg).to.equal('Method not allowed');
+        }));
     });
     describe('/comments', () => {
       it('GET gives status 200 and returns an array of comments for the given article_id', () => request
@@ -252,6 +321,12 @@ describe('/', () => {
           expect(res.body.comments[1].votes).to.equal(100);
           expect(res.body.comments[1].author).to.equal('icellusedkars');
           expect(res.body.comments[1].created_at).to.equal('2015-11-23T12:36:03.389Z');
+        }));
+      xit("404 for invalid method when trying to make a GET request for an article id which doesn't exist", () => request
+        .get('/api/articles/1223/comments')
+        .expect(404)
+        .then((res) => {
+          expect(res.body.msg).to.equal('Article not found');
         }));
       it('GET gives status 200 and serves up an array of articles given a sort_by query with default descending order', () => request
         .get('/api/articles/1/comments?sort_by=votes')
@@ -287,10 +362,24 @@ describe('/', () => {
           expect(res.body.comments[0].votes).to.equal(14);
           expect(res.body.comments[0].author).to.equal('butter_bridge');
         }));
+      it("200 and serves up an array of objects as default when sorting by a route which doesn't exist", () => request
+        .get('/api/articles/1/comments?sort_by=abc')
+        .expect(404)
+        .then((res) => {
+          expect(res.body.msg).to.equal('Not found');
+          // expect(res.body.comments).to.be.an('array');
+          // expect(res.body.comments[0].created_at).to.equal('2016-11-22T12:36:03.389Z');
+          // expect(res.body.comments[0].body).to.equal(
+          //   'The beautiful thing about treasure is that it exists. Got to find out what kind of sheets these are; not cotton, not rayon, silky.',
+          // );
+          // expect(res.body.comments[0].votes).to.equal(14);
+          // expect(res.body.comments[0].author).to.equal('butter_bridge');
+        }));
       it('GET gives status 200 and serves up an array of articles given a sort_by query which should default to created_at when passed no column and with an ascending order', () => request
         .get('/api/articles/1/comments?sort_by&order=asc')
         .expect(200)
         .then((res) => {
+          console.log(res.body);
           expect(res.body.comments).to.be.an('array');
           expect(res.body.comments[0].created_at).to.equal('2000-11-26T12:36:03.389Z');
           expect(res.body.comments[0].body).to.equal(
@@ -310,11 +399,27 @@ describe('/', () => {
           .expect(201)
           .then((res) => {
             expect(res.body).to.be.an('object');
-            expect(res.body.comments.author).to.equal('rogersop');
-            expect(res.body.comments.votes).to.equal(0);
-            expect(res.body.comments.body).to.equal('Everything is awesome!');
+            expect(res.body.comment.author).to.equal('rogersop');
+            expect(res.body.comment.votes).to.equal(0);
+            expect(res.body.comment.body).to.equal('Everything is awesome!');
           });
       });
+      it('POST 400 when given insufficient information', () => {
+        const newArticle = {};
+        return request
+          .post('/api/articles/1/comments')
+          .send(newArticle)
+          .expect(404)
+          .then((res) => {
+            expect(res.body.msg).to.equal('Not found');
+          });
+      });
+      it('404 for invalid when trying to POST given an article id', () => request
+        .post('/api/articles/1/comments')
+        .expect(404)
+        .then((res) => {
+          expect(res.body.msg).to.equal('Not found');
+        }));
       it('PATCH gives a status 202 and returns a comments object with an upvoted votes given a comment parameter', () => {
         const newVote = { inc_votes: 1 };
         const expected = [
@@ -337,12 +442,50 @@ describe('/', () => {
             expect(res.body.comment).to.eql(expected);
           });
       });
+      it('PATCH gives a status 202 and returns a comments object with downvoted votes given a negative comment parameter', () => {
+        const newVote = { inc_votes: -1 };
+        const expected = [
+          {
+            comment_id: 1,
+            author: 'butter_bridge',
+            article_id: 9,
+            votes: 15,
+            created_at: '2017-11-22T12:36:03.389Z',
+            body:
+              "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+          },
+        ];
+        return request
+          .patch('/api/comments/1')
+          .send(newVote)
+          .expect(202)
+          .then((res) => {
+            expect(res.body).to.have.all.keys('comment');
+            expect(res.body.comment).to.eql(expected);
+          });
+      });
+      it('404 for invalid method when trying to make a PATCH request without correct information', () => {
+        const newDesc = 'This is a test';
+        return request
+          .patch('/api/comments/1')
+          .send(newDesc)
+          .expect(404)
+          .then((res) => {
+            expect(res.body.msg).to.equal("Comment couldn't be updated");
+          });
+      });
       it('DELETE gives a status 204 and deletes the given comment by comment_id', () => request
         .delete('/api/comments/1')
         .expect(204)
         .then(() => request.get('/api/comments').then((res) => {
           expect(commentData.find(comment => comment.comment_id === 1)).to.equal(undefined);
         })));
+      it.only('405 for invalid method', () => request
+        .delete('/api/comments')
+        .expect(404)
+        .then((res) => {
+          expect(res.body.msg).to.equal('Page not found');
+        }));
     });
     describe('/users', () => {
       it('GET returns 200 and returns an array of users', () => request
@@ -369,11 +512,27 @@ describe('/', () => {
           .expect(201)
           .then((res) => {
             expect(res.body).to.be.an('object');
-            expect(res.body.users[0]).to.eql(newUser);
-            expect(res.body.users[0].username).to.equal('WillyWehWah');
-            expect(res.body.users[0].name).to.equal('Willem Taylor');
+            expect(res.body.users).to.eql(newUser);
+            expect(res.body.users.username).to.equal('WillyWehWah');
+            expect(res.body.users.name).to.equal('Willem Taylor');
           });
       });
+      it('POST 400 when given insufficient information', () => {
+        const newUser = {};
+        return request
+          .post('/api/users')
+          .send(newUser)
+          .expect(400)
+          .then((res) => {
+            expect(res.body.msg).to.equal('violates not null violation');
+          });
+      });
+      it('404 for invalid when trying to POST given an user id', () => request
+        .post('/api/users/1')
+        .expect(404)
+        .then((res) => {
+          expect(res.body.msg).to.equal('Page not found');
+        }));
       it('GET gives a status 200 and returns a user object given a username', () => request
         .get('/api/users/butter_bridge')
         .expect(200)
@@ -385,6 +544,12 @@ describe('/', () => {
           expect(res.body.users.avatar_url).to.equal(
             'https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg',
           );
+        }));
+      it('404 for invalid when trying to GET using an incorrect username', () => request
+        .get('/api/users/will')
+        .expect(404)
+        .then((res) => {
+          expect(res.body.msg).to.equal('Page not found');
         }));
     });
   });

@@ -11,7 +11,7 @@ exports.getUsers = (req, res, next) => {
 exports.postUser = (req, res, next) => {
   const newUser = req.body;
   insertUser(newUser)
-    .then((users) => {
+    .then(([users]) => {
       res.status(201).send({ users });
     })
     .catch(next);

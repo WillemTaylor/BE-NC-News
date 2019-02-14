@@ -1,8 +1,10 @@
 const app = require('express')();
 const bodyParser = require('body-parser');
 const apiRouter = require('./routes/api-router');
-const { handle400 } = require('./errors/index');
-const { data } = require('./end-points.json');
+const {
+  handle400, handle404, handle405, handle422,
+} = require('./errors/index');
+// const { data } = require('./end-points.json');
 
 app.use(bodyParser.json());
 
@@ -13,11 +15,9 @@ app.all('/*', (req, res) => {
 });
 
 app.use(handle400);
-
-app.use((err, req, res, next) => {
-  // similar pattern in here
-  res.status(404).send({ msg: err.msg || 'Not found' });
-});
+app.use(handle404);
+app.use(handle405);
+app.use(handle422);
 
 // let route;
 // const routes = [];
@@ -35,11 +35,5 @@ app.use((err, req, res, next) => {
 //     });
 //   }
 // });
-
-exports.sendRoutes = (req, res) => {
-  console.log(data);
-  res.header('Content-Type', 'application/json');
-  res.send(JSON.stringify(data));
-};
 
 module.exports = app;

@@ -10,8 +10,9 @@ exports.getArticles = (req, res, next) => {
   const { sort_by, order, ...whereClauses } = req.query;
 
   fetchArticles(sort_by, order, whereClauses)
-    .then((articles) => {
-      res.status(200).send({ articles });
+    .then(([articles]) => {
+      if (articles) return res.status(200).send({ articles });
+      return Promise.reject({ status: 404, msg: 'Articles not found' });
     })
     .catch(next);
 };
@@ -40,7 +41,8 @@ exports.patchArticleByIdUpdateVote = (req, res, next) => {
   const updatedVote = req.body.inc_votes;
   fetchArticleByIdUpdateVote(articleById, updatedVote)
     .then((article) => {
-      res.status(202).send({ article });
+      if (updatedVote) return res.status(202).send({ article });
+      return Promise.reject({ status: 404, msg: "Article couldn't be updated" });
     })
     .catch(next);
 };

@@ -1,5 +1,3 @@
-// in express, theres a thing called send file
-
 {
  "GET /api/topics": "GET: 200 status and serves an array of topic objects",
  "POST /api/topics": "POST: 201 status and posts a new topic object when given new object data",
