@@ -1,12 +1,16 @@
 const connection = require('../db/connection');
 
-exports.fetchArticles = (sort_by, order, whereClauses) => connection
-  .select('*')
-  .from('articles')
-  .groupBy('articles.article_id')
-  .count('body as comment_count')
-  .where(whereClauses)
-  .orderBy(sort_by || 'created_at', order || 'desc');
+exports.fetchArticles = (sort_by, order, { author, ...whereClauses }) => {
+  if (author) whereClauses['articles.author'] = author;
+  return connection
+    .select('articles.*')
+    .count('comments.comment_id as comment_count')
+    .from('articles')
+    .leftJoin('comments', 'comments.article_id', '=', 'articles.article_id')
+    .groupBy('articles.article_id')
+    .where(whereClauses)
+    .orderBy(sort_by || 'created_at', order || 'desc');
+};
 
 exports.insertArticle = article => connection('articles')
   .insert(article)
@@ -21,7 +25,7 @@ exports.fetchArticleByIdUpdateVote = (id, newVote) => connection
   .select('*')
   .from('articles')
   .where('article_id', id)
-  .increment('votes', newVote)
+  .increment('votes', newVote || 0)
   .returning('*');
 
 exports.removeArticleById = id => connection
@@ -29,19 +33,3 @@ exports.removeArticleById = id => connection
   .from('articles')
   .where('article_id', id)
   .del('*');
-
-/*
-SELECT house_name, COUNT (wizard_id) AS number_of_wizards
-FROM houses
- JOIN wizards ON houses.house_id = wizard.house_id
-GROUP BY house_name;
-
-exports.getHouses = () => {
-  return connection
-  .select('houses.*')
-  .from('houses')
-  .join('wizards', 'wizard.house_id', '=', 'houses.house_id')
-  .groupBy('houses.house_name')
-  .count('wizards.id as student_count');
-}
-*/

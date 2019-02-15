@@ -10,7 +10,7 @@ exports.getTopics = (req, res, next) => {
 
 exports.postTopic = (req, res, next) => {
   const newTopic = req.body;
-  insertTopic(newTopic)
+  return insertTopic(newTopic)
     .then(([topic]) => {
       res.status(201).send({ topic });
     })

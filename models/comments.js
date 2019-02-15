@@ -21,7 +21,7 @@ exports.fetchCommentByIdUpdateVote = (id, newVote) => connection
   .select('*')
   .from('comments')
   .where('comment_id', id)
-  .increment('votes', newVote)
+  .increment('votes', newVote || 0)
   .returning('*');
 
 exports.removeCommentById = id => connection

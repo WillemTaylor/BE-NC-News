@@ -20,8 +20,8 @@ exports.postUser = (req, res, next) => {
 exports.getUserbyId = (req, res, next) => {
   const userById = req.params.user_id;
   fetchUserById(userById)
-    .then(([users]) => {
-      if (users) { return res.status(200).send({ users }); }
+    .then(([user]) => {
+      if (user) { return res.status(200).send({ user }); }
       return Promise.reject({ status: 404, msg: "user doesn't exist" });
     })
     .catch(next);

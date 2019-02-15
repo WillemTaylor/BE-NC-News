@@ -15,7 +15,7 @@ const {
 } = require('../controllers/comments');
 const { getUsers, postUser, getUserbyId } = require('../controllers/users');
 const { sendRoutes } = require('../end-points');
-const { handle405 } = require('../errors/index');
+const { handle404, handle405 } = require('../errors/index');
 
 apiRouter
   .route('/topics')
@@ -56,6 +56,6 @@ apiRouter
 
 apiRouter.route('/users/:user_id').get(getUserbyId).all(handle405);
 
-apiRouter.route('/').get(sendRoutes);
+apiRouter.route('/').get(sendRoutes).all(handle404);
 
 module.exports = apiRouter;

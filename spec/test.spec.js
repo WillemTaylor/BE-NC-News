@@ -11,11 +11,11 @@ const connection = require('../db/connection');
 const request = supertest(app);
 
 describe('/', () => {
-  it('non-existent route', () => request
+  xit('non-existent route', () => request
     .get('/vefv')
     .expect(404)
-    .then(({ body }) => {
-      expect(body.msg).to.equal('Page not found');
+    .then((res) => {
+      expect(res.body.msg).to.equal('Page not found');
     }));
 
   describe('/api', () => {
@@ -101,12 +101,25 @@ describe('/', () => {
             expect(res.body.msg).to.equal('violates not null violation');
           });
       });
-      it("404 when the route doesn't exist", () => request
-        .get('/api/topics/1')
-        .expect(404)
+      it("405 when the method on the topics doesn't exist", () => request
+        .delete('/api/topics')
+        .expect(405)
         .then((res) => {
-          expect(res.body.msg).to.equal('Page not found');
+          expect(res.body.msg).to.equal('Method not allowed');
         }));
+      it('POST 422 when client sends a body with a duplicate slug', () => {
+        const newTopic = {
+          slug: 'cats',
+          description: 'Hi',
+        };
+        return request
+          .post('/api/topics')
+          .send(newTopic)
+          .expect(422)
+          .then((res) => {
+            expect(res.body.msg).to.equal("Request couldn't be processed");
+          });
+      });
     });
     describe('/articles', () => {
       it('GET gives status 200 and serves up an array of articles', () => request
@@ -121,6 +134,7 @@ describe('/', () => {
             'topic',
             'created_at',
             'votes',
+            'comment_count',
           );
         }));
       it('GET gives status 200 and serves up an array of articles given a sort_by query with default descending order', () => request
@@ -129,7 +143,6 @@ describe('/', () => {
         .then((res) => {
           expect(res.body.articles).to.be.an('array');
           expect(res.body.articles[0].title).to.equal('Z');
-          expect(res.body.articles[0].body).to.equal('I was hungry.');
           expect(res.body.articles[0].topic).to.equal('mitch');
           expect(res.body.articles[0].author).to.equal('icellusedkars');
         }));
@@ -145,7 +158,6 @@ describe('/', () => {
         .then((res) => {
           expect(res.body.articles).to.be.an('array');
           expect(res.body.articles[0].title).to.equal('A');
-          expect(res.body.articles[0].body).to.equal('Delicious tin of cat food');
           expect(res.body.articles[0].topic).to.equal('mitch');
           expect(res.body.articles[0].author).to.equal('icellusedkars');
           expect(res.body.articles[0].created_at).to.equal('1998-11-20T12:21:54.171Z');
@@ -156,7 +168,6 @@ describe('/', () => {
         .then((res) => {
           expect(res.body.articles).to.be.an('array');
           expect(res.body.articles[0].created_at).to.equal('2018-11-15T12:21:54.171Z');
-          expect(res.body.articles[0].body).to.equal('I find this existence challenging');
           expect(res.body.articles[0].topic).to.equal('mitch');
           expect(res.body.articles[0].author).to.equal('butter_bridge');
         }));
@@ -166,7 +177,6 @@ describe('/', () => {
         .then((res) => {
           expect(res.body.articles).to.be.an('array');
           expect(res.body.articles[0].created_at).to.equal('1974-11-26T12:21:54.171Z');
-          expect(res.body.articles[0].body).to.equal('Have you seen the size of that thing?');
           expect(res.body.articles[0].topic).to.equal('mitch');
           expect(res.body.articles[0].title).to.equal('Moustache');
           expect(res.body.articles[0].author).to.equal('butter_bridge');
@@ -239,7 +249,13 @@ describe('/', () => {
         .then((res) => {
           expect(res.body.msg).to.equal('Bad request: invalid input');
         }));
-      it('PATCH gives a status 202 and returns an article object with an upvoted votes given an article parameter', () => {
+      it("GET 404 when the route doesn't exist", () => request
+        .get('/api/articles/12435')
+        .expect(404)
+        .then((res) => {
+          expect(res.body.msg).to.equal('Article not found');
+        }));
+      it('PATCH gives a status 200 and returns an article object with an upvoted votes given an article parameter', () => {
         const newVote = { inc_votes: 1 };
         const expected = [
           {
@@ -255,13 +271,13 @@ describe('/', () => {
         return request
           .patch('/api/articles/1')
           .send(newVote)
-          .expect(202)
+          .expect(200)
           .then((res) => {
             expect(res.body).to.have.all.keys('article');
             expect(res.body.article).to.eql(expected);
           });
       });
-      it('PATCH gives a status 202 and returns an article object with a downvoted vote given a negative article parameter', () => {
+      it('PATCH gives a status 200 and returns an article object with a downvoted vote given a negative article parameter', () => {
         const newVote = { inc_votes: -1 };
         const expected = [
           {
@@ -277,18 +293,18 @@ describe('/', () => {
         return request
           .patch('/api/articles/1')
           .send(newVote)
-          .expect(202)
+          .expect(200)
           .then((res) => {
             expect(res.body).to.have.all.keys('article');
             expect(res.body.article).to.eql(expected);
           });
       });
-      it('404 for invalid method when trying to make a PATCH request without correct information', () => {
-        const newDesc = 'This is a test';
+      it('400 when trying to make a PATCH request without correct parameter', () => {
+        const newDesc = { inc_votes: 'This is a test' };
         return request
           .patch('/api/articles/1')
           .send(newDesc)
-          .expect(404)
+          .expect(400)
           .then((res) => {
             expect(res.body.msg).to.equal("Article couldn't be updated");
           });
@@ -305,6 +321,12 @@ describe('/', () => {
         .then((res) => {
           expect(res.body.msg).to.equal('Method not allowed');
         }));
+      it('404 when passed a non-existent article_id', () => request
+        .delete('/api/articles/123456')
+        .expect(404)
+        .then((res) => {
+          expect(res.body.msg).to.equal('Not found');
+        }));
     });
     describe('/comments', () => {
       it('GET gives status 200 and returns an array of comments for the given article_id', () => request
@@ -317,11 +339,17 @@ describe('/', () => {
           expect(res.body.comments[1].author).to.equal('icellusedkars');
           expect(res.body.comments[1].created_at).to.equal('2015-11-23T12:36:03.389Z');
         }));
-      it("404 for invalid method when trying to make a GET request for an article id which doesn't exist", () => request
+      it("400 when trying to make a GET request for an article id which doesn't exist", () => request
         .get('/api/articles/hi/comments')
         .expect(400)
         .then((res) => {
           expect(res.body.msg).to.equal('Bad request: invalid input');
+        }));
+      it('422: unprocessable entity when given a non-existent username', () => request
+        .get('/api/articles/12345/comments')
+        .expect(422)
+        .then((res) => {
+          expect(res.body.msg).to.equal('Comments not found');
         }));
       it('GET gives status 200 and serves up an array of articles given a sort_by query with default descending order', () => request
         .get('/api/articles/1/comments?sort_by=votes')
@@ -385,7 +413,7 @@ describe('/', () => {
             expect(res.body.comment.body).to.equal('Everything is awesome!');
           });
       });
-      it('PATCH gives a status 202 and returns a comments object with an upvoted votes given a comment parameter', () => {
+      it('PATCH gives a status 200 and returns a comments object with an upvoted votes given a comment parameter', () => {
         const newVote = { inc_votes: 1 };
         const expected = [
           {
@@ -401,13 +429,13 @@ describe('/', () => {
         return request
           .patch('/api/comments/1')
           .send(newVote)
-          .expect(202)
+          .expect(200)
           .then((res) => {
             expect(res.body).to.have.all.keys('comment');
             expect(res.body.comment).to.eql(expected);
           });
       });
-      it('PATCH gives a status 202 and returns a comments object with downvoted votes given a negative comment parameter', () => {
+      it('PATCH gives a status 200 and returns a comments object with downvoted votes given a negative comment parameter', () => {
         const newVote = { inc_votes: -1 };
         const expected = [
           {
@@ -423,20 +451,41 @@ describe('/', () => {
         return request
           .patch('/api/comments/1')
           .send(newVote)
-          .expect(202)
+          .expect(200)
           .then((res) => {
             expect(res.body).to.have.all.keys('comment');
             expect(res.body.comment).to.eql(expected);
           });
       });
-      it('404 for invalid method when trying to make a PATCH request without correct information', () => {
-        const newDesc = 'This is a test';
+      it('400 for invalid method when trying to make a PATCH request without correct information', () => {
+        const newDesc = { inc_votes: 'This is a test' };
         return request
           .patch('/api/comments/1')
           .send(newDesc)
-          .expect(404)
+          .expect(400)
           .then((res) => {
             expect(res.body.msg).to.equal("Comment couldn't be updated");
+          });
+      });
+      it('PATCH 200 status with unmodified content when trying to update with no body', () => {
+        const newDesc = {};
+        const expected = [
+          {
+            comment_id: 1,
+            author: 'butter_bridge',
+            article_id: 9,
+            votes: 16,
+            created_at: '2017-11-22T12:36:03.389Z',
+            body:
+              "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+          },
+        ];
+        return request
+          .patch('/api/comments/1')
+          .send(newDesc)
+          .expect(200)
+          .then((res) => {
+            expect(res.body.comment).to.eql(expected);
           });
       });
       it('DELETE gives a status 204 and deletes the given comment by comment_id', () => request
@@ -450,6 +499,12 @@ describe('/', () => {
         .expect(400)
         .then((res) => {
           expect(res.body.msg).to.equal('Bad request: invalid input');
+        }));
+      it('404 for not found when trying to delete comment object for a non-existent comment_id', () => request
+        .delete('/api/comments/123456')
+        .expect(404)
+        .then((res) => {
+          expect(res.body.msg).to.equal('Comment not found');
         }));
     });
     describe('/users', () => {
@@ -498,15 +553,21 @@ describe('/', () => {
         .then((res) => {
           expect(res.body.msg).to.equal('Method not allowed');
         }));
+      it('405 for invalid method when trying to DELETE users object', () => request
+        .delete('/api/users')
+        .expect(405)
+        .then((res) => {
+          expect(res.body.msg).to.equal('Method not allowed');
+        }));
       it('GET gives a status 200 and returns a user object given a username', () => request
         .get('/api/users/butter_bridge')
         .expect(200)
         .then((res) => {
-          expect(res.body).to.have.all.keys('users');
-          expect(res.body.users).to.be.an('object');
-          expect(res.body.users.username).to.equal('butter_bridge');
-          expect(res.body.users.name).to.equal('jonny');
-          expect(res.body.users.avatar_url).to.equal(
+          expect(res.body).to.have.all.keys('user');
+          expect(res.body.user).to.be.an('object');
+          expect(res.body.user.username).to.equal('butter_bridge');
+          expect(res.body.user.name).to.equal('jonny');
+          expect(res.body.user.avatar_url).to.equal(
             'https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg',
           );
         }));

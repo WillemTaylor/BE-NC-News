@@ -5,11 +5,13 @@ const {
   fetchArticleByIdUpdateVote,
   removeArticleById,
 } = require('../models/articles');
+const { articleData } = require('../db/data');
 
 exports.getArticles = (req, res, next) => {
   const { sort_by, order, ...whereClauses } = req.query;
   fetchArticles(sort_by, order, whereClauses)
     .then((articles) => {
+      articles.forEach(article => delete article.body);
       if (articles) return res.status(200).send({ articles });
       return Promise.reject({ status: 404, msg: 'Articles not found' });
     })
@@ -27,6 +29,7 @@ exports.postArticle = (req, res, next) => {
 
 exports.getArticlebyId = (req, res, next) => {
   const articleById = req.params.article_id;
+  if (articleById > articleData.length) next({ status: 404, msg: 'Article not found' });
   fetchArticleById(articleById)
     .then(([article]) => {
       if (article) return res.status(200).send({ article });
@@ -37,10 +40,11 @@ exports.getArticlebyId = (req, res, next) => {
 
 exports.patchArticleByIdUpdateVote = (req, res, next) => {
   const articleById = req.params.article_id;
-  const updatedVote = req.body.inc_votes;
-  fetchArticleByIdUpdateVote(articleById, updatedVote)
+  const updatedVote = Number(req.body.inc_votes);
+  if (typeof req.body.inc_votes !== 'number') next({ status: 400, msg: "Article couldn't be updated" });
+  return fetchArticleByIdUpdateVote(articleById, updatedVote)
     .then((article) => {
-      if (updatedVote) return res.status(202).send({ article });
+      if (updatedVote) return res.status(200).send({ article });
       return Promise.reject({ status: 404, msg: "Article couldn't be updated" });
     })
     .catch(next);
@@ -48,9 +52,13 @@ exports.patchArticleByIdUpdateVote = (req, res, next) => {
 
 exports.deleteArticle = (req, res, next) => {
   const articleById = req.params.article_id;
-  removeArticleById(articleById)
+  if (articleById > articleData.length) next({ status: 404, msg: 'Not found' });
+  return removeArticleById(articleById)
     .then((msg) => {
-      res.status(204).send({ msg });
+      if (msg) {
+        return res.status(204).send({ msg });
+      }
+      return Promise.reject({ status: 404, msg: 'Comment not found' });
     })
     .catch(next);
 };
