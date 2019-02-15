@@ -40,10 +40,17 @@ exports.getArticlebyId = (req, res, next) => {
 
 exports.patchArticleByIdUpdateVote = (req, res, next) => {
   const articleById = req.params.article_id;
-  const updatedVote = Number(req.body.inc_votes);
-  if (typeof req.body.inc_votes !== 'number') next({ status: 400, msg: "Article couldn't be updated" });
+  const updatedVote = req.body.inc_votes;
+  if (typeof updatedVote === 'string') {
+    return res.status(400).send({ msg: "article couldn't be updated" });
+  }
+  if (updatedVote === undefined) {
+    return fetchArticleByIdUpdateVote(articleById)
+      .then(article => res.status(200).send({ article }))
+      .catch(next);
+  }
   return fetchArticleByIdUpdateVote(articleById, updatedVote)
-    .then((article) => {
+    .then(([article]) => {
       if (updatedVote) return res.status(200).send({ article });
       return Promise.reject({ status: 404, msg: "Article couldn't be updated" });
     })

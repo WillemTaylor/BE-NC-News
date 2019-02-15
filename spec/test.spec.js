@@ -238,6 +238,7 @@ describe('/', () => {
         .get('/api/articles/1')
         .expect(200)
         .then((res) => {
+          console.log(res.body);
           expect(res.body).to.have.all.keys('article');
           expect(res.body.article).to.be.an('object');
           expect(res.body.article.title).to.equal('Living in the shadow of a great man');
@@ -257,17 +258,15 @@ describe('/', () => {
         }));
       it('PATCH gives a status 200 and returns an article object with an upvoted votes given an article parameter', () => {
         const newVote = { inc_votes: 1 };
-        const expected = [
-          {
-            article_id: 1,
-            title: 'Living in the shadow of a great man',
-            topic: 'mitch',
-            author: 'butter_bridge',
-            body: 'I find this existence challenging',
-            created_at: '2018-11-15T12:21:54.171Z',
-            votes: 101,
-          },
-        ];
+        const expected = {
+          article_id: 1,
+          title: 'Living in the shadow of a great man',
+          topic: 'mitch',
+          author: 'butter_bridge',
+          body: 'I find this existence challenging',
+          created_at: '2018-11-15T12:21:54.171Z',
+          votes: 101,
+        };
         return request
           .patch('/api/articles/1')
           .send(newVote)
@@ -279,17 +278,15 @@ describe('/', () => {
       });
       it('PATCH gives a status 200 and returns an article object with a downvoted vote given a negative article parameter', () => {
         const newVote = { inc_votes: -1 };
-        const expected = [
-          {
-            article_id: 1,
-            title: 'Living in the shadow of a great man',
-            topic: 'mitch',
-            author: 'butter_bridge',
-            body: 'I find this existence challenging',
-            created_at: '2018-11-15T12:21:54.171Z',
-            votes: 99,
-          },
-        ];
+        const expected = {
+          article_id: 1,
+          title: 'Living in the shadow of a great man',
+          topic: 'mitch',
+          author: 'butter_bridge',
+          body: 'I find this existence challenging',
+          created_at: '2018-11-15T12:21:54.171Z',
+          votes: 99,
+        };
         return request
           .patch('/api/articles/1')
           .send(newVote)
@@ -306,7 +303,26 @@ describe('/', () => {
           .send(newDesc)
           .expect(400)
           .then((res) => {
-            expect(res.body.msg).to.equal("Article couldn't be updated");
+            expect(res.body.msg).to.equal("article couldn't be updated");
+          });
+      });
+      it('PATCH 200 status with unmodified content when trying to update with no body', () => {
+        const newDesc = {};
+        const expected = [{
+          article_id: 1,
+          title: 'Living in the shadow of a great man',
+          topic: 'mitch',
+          author: 'butter_bridge',
+          body: 'I find this existence challenging',
+          created_at: '2018-11-15T12:21:54.171Z',
+          votes: 100,
+        }];
+        return request
+          .patch('/api/articles/1')
+          .send(newDesc)
+          .expect(200)
+          .then((res) => {
+            expect(res.body.article).to.eql(expected);
           });
       });
       it('DELETE gives a status 204 and deletes the given article by article_id', () => request
@@ -345,9 +361,9 @@ describe('/', () => {
         .then((res) => {
           expect(res.body.msg).to.equal('Bad request: invalid input');
         }));
-      it('422: unprocessable entity when given a non-existent username', () => request
+      it('404: unprocessable entity when given a non-existent username', () => request
         .get('/api/articles/12345/comments')
-        .expect(422)
+        .expect(404)
         .then((res) => {
           expect(res.body.msg).to.equal('Comments not found');
         }));
@@ -413,19 +429,42 @@ describe('/', () => {
             expect(res.body.comment.body).to.equal('Everything is awesome!');
           });
       });
+      it('POST 404 when given a non-existent article_id', () => {
+        const newComment = {
+          username: 'rogersop',
+          body: 'Everything is awesome!',
+        };
+        return request
+          .post('/api/articles/123456/comments')
+          .send(newComment)
+          .expect(404)
+          .then((res) => {
+            expect(res.body.msg).to.equal('Article not found');
+          });
+      });
+      it('POST 422 when given a non-existent username', () => {
+        const newComment = {
+          username: 'Will',
+          body: 'Everything is awesome!',
+        };
+        return request
+          .post('/api/articles/1/comments')
+          .send(newComment)
+          .expect(422)
+          .then((res) => {
+            expect(res.body.msg).to.equal("User doesn't exist");
+          });
+      });
       it('PATCH gives a status 200 and returns a comments object with an upvoted votes given a comment parameter', () => {
         const newVote = { inc_votes: 1 };
-        const expected = [
-          {
-            comment_id: 1,
-            author: 'butter_bridge',
-            article_id: 9,
-            votes: 17,
-            created_at: '2017-11-22T12:36:03.389Z',
-            body:
-              "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
-          },
-        ];
+        const expected = {
+          comment_id: 1,
+          author: 'butter_bridge',
+          article_id: 9,
+          votes: 17,
+          created_at: '2017-11-22T12:36:03.389Z',
+          body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+        };
         return request
           .patch('/api/comments/1')
           .send(newVote)
@@ -437,17 +476,14 @@ describe('/', () => {
       });
       it('PATCH gives a status 200 and returns a comments object with downvoted votes given a negative comment parameter', () => {
         const newVote = { inc_votes: -1 };
-        const expected = [
-          {
-            comment_id: 1,
-            author: 'butter_bridge',
-            article_id: 9,
-            votes: 15,
-            created_at: '2017-11-22T12:36:03.389Z',
-            body:
-              "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
-          },
-        ];
+        const expected = {
+          comment_id: 1,
+          author: 'butter_bridge',
+          article_id: 9,
+          votes: 15,
+          created_at: '2017-11-22T12:36:03.389Z',
+          body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+        };
         return request
           .patch('/api/comments/1')
           .send(newVote)
@@ -467,19 +503,26 @@ describe('/', () => {
             expect(res.body.msg).to.equal("Comment couldn't be updated");
           });
       });
+      it('404 for non-existent comment_id when trying to make a PATCH request', () => {
+        const newDesc = { inc_votes: 1 };
+        return request
+          .patch('/api/comments/12345')
+          .send(newDesc)
+          .expect(404)
+          .then((res) => {
+            expect(res.body.msg).to.equal('Comment not found');
+          });
+      });
       it('PATCH 200 status with unmodified content when trying to update with no body', () => {
         const newDesc = {};
-        const expected = [
-          {
-            comment_id: 1,
-            author: 'butter_bridge',
-            article_id: 9,
-            votes: 16,
-            created_at: '2017-11-22T12:36:03.389Z',
-            body:
-              "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
-          },
-        ];
+        const expected = [{
+          comment_id: 1,
+          author: 'butter_bridge',
+          article_id: 9,
+          votes: 16,
+          created_at: '2017-11-22T12:36:03.389Z',
+          body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+        }];
         return request
           .patch('/api/comments/1')
           .send(newDesc)

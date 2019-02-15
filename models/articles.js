@@ -17,8 +17,10 @@ exports.insertArticle = article => connection('articles')
   .returning('*');
 
 exports.fetchArticleById = id => connection
-  .select('*')
+  .select('articles.*')
+  .count('comments.comment_id as comment_count')
   .from('articles')
+  .leftJoin('comments', 'comments.article_id', '=', 'articles.article_id')
   .where('article_id', id);
 
 exports.fetchArticleByIdUpdateVote = (id, newVote) => connection
