@@ -29,7 +29,7 @@ Run npm i body-parser
 You should see the following scripts in your package.json file:
 
 ```
-"createdb": "psql -f db/data/setup.sql"
+"createdb": "psql -f db/setup.sql"
 ```
 
 This will setup the database table using psql

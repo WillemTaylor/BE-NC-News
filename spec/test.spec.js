@@ -238,7 +238,6 @@ describe('/', () => {
         .get('/api/articles/1')
         .expect(200)
         .then((res) => {
-          console.log(res.body);
           expect(res.body).to.have.all.keys('article');
           expect(res.body.article).to.be.an('object');
           expect(res.body.article.title).to.equal('Living in the shadow of a great man');
