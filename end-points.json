@@ -24,4 +24,4 @@
  "POST /api/users": "POST: 201 status and serves up a new user object given new object data",
  "GET /api/users/:username": "GET: 200 status and serves up a user object given a username",
  "GET /api": "GET: 200 status and serves up an object of all the end points within this API"
-}
+}  
