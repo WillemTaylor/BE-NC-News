@@ -1,7 +1,6 @@
 # NC-Knews
 
-A fully functioning API to use in the Northcoders News Sprint, including various end-points and error handling methods to capture any user errors. The databases are in PSQL and Knex will be used to interact with these databases.
-
+A fully functioning API to use in the Northcoders News sprint, including various end-points and error handling methods to capture any user errors. The databases are in PSQL and Knex will be used to interact with these databases.
 
 ## Getting Started
 
@@ -12,17 +11,15 @@ Once done, in terminal;
 git clone 'github repo url'
 ```
 
-```cd``` into the repository
-
+`cd` into the repository
 
 ### Installing
 
 First of all, you'll need to install these packages to your local machine:
 Run npm i mocha chai -D
-Run npm i express supertest 
+Run npm i express supertest
 Run npm i knex pg
 Run npm i body-parser
-
 
 ### Scripts
 
@@ -64,10 +61,9 @@ This will use the functions created to seed the files and add the data to your t
 
 This will be used when testing your end-points.
 
-
 ## Seeding
 
-Once you have the development env running, you'll need to write seed functions to seed the databases with the provided data. Test and development data are both provided, therefore a configuration object will need to be written first to distinguish which database was seeded from which data file. 
+Once you have the development env running, you'll need to write seed functions to seed the databases with the provided data. Test and development data are both provided, therefore a configuration object will need to be written first to distinguish which database was seeded from which data file.
 
 ```
 const ENV = process.env.NODE_ENV || 'development';
@@ -111,17 +107,16 @@ Once this has been done, you can begin writing seed functions to seed the databa
   - `created_at` defaults to the current date
   - `body`
 
-
 ### Building and Testing
 
 Once the tables have been successfully seeded, you can do the following:
+
 1.  Build your Express app
 2.  Mount an API Router onto your app
 3.  Define the routes described below
 4.  Define controller functions for each of your routes.
 
 You should also make use of testing as you go, checking both successful requests and the variety of errors you can expect to encounter.
-
 
 ### Routes
 
@@ -170,13 +165,12 @@ These models will then be used withing a controller folder, where you will build
 
 ## Deployment
 
-Once the application has been built, you will deploy this and your database to heroku.
-
+Once the application has been built, you will deploy this and your database to heroku. This project was delpoyed here
+[https://nc-knews1.herokuapp.com/api](https://nc-knews1.herokuapp.com/api)
 
 ### Author
 
 Willem Taylor
-
 
 ### License
 
