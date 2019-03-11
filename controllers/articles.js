@@ -32,6 +32,7 @@ exports.getArticlebyId = (req, res, next) => {
   if (articleById > articleData.length) next({ status: 404, msg: 'Article not found' });
   fetchArticleById(articleById)
     .then(([article]) => {
+      console.log(article);
       if (article) return res.status(200).send({ article });
       return Promise.reject({ status: 404, msg: 'Article not found' });
     })

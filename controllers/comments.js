@@ -13,7 +13,6 @@ exports.getCommentsbyId = (req, res, next) => {
   return fetchCommentsbyId(sort_by, order, articleById)
     .then((comments) => {
       if (comments) return res.status(200).send({ comments });
-      console.log('hi');
       return Promise.reject({ status: 404, msg: 'Comments not found' });
     })
     .catch(next);
