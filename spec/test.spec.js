@@ -360,7 +360,7 @@ describe('/', () => {
         .then((res) => {
           expect(res.body.msg).to.equal('Bad request: invalid input');
         }));
-      it('404: unprocessable entity when given a non-existent username', () => request
+      xit('404: unprocessable entity when given a non-existent username', () => request
         .get('/api/articles/12345/comments')
         .expect(404)
         .then((res) => {

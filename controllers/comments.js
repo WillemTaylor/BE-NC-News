@@ -22,7 +22,7 @@ exports.postCommentById = (req, res, next) => {
   const articleById = req.params.article_id;
   const newComment = req.body;
   const usernames = articleData.map(x => x.author);
-  if (articleById > articleData.length) return res.status(404).send({ msg: 'Article not found' });
+  // if (articleById > articleData.length) return res.status(404).send({ msg: 'Article not found' });
   if (!usernames.includes(newComment.username)) return res.status(422).send({ msg: "User doesn't exist" });
   return insertCommentByArticleId(articleById, newComment)
     .then(([comment]) => {
