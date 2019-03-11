@@ -9,10 +9,11 @@ const { commentData, articleData } = require('../db/data');
 exports.getCommentsbyId = (req, res, next) => {
   const articleById = req.params.article_id;
   const { sort_by, order } = req.query;
-  // if (articleById > articleData.length) return res.status(404).send({ msg: 'Comments not found' });
+  if (articleById > articleData.length) return res.status(404).send({ msg: 'Comments not found' });
   return fetchCommentsbyId(sort_by, order, articleById)
     .then((comments) => {
       if (comments) return res.status(200).send({ comments });
+      console.log('hi');
       return Promise.reject({ status: 404, msg: 'Comments not found' });
     })
     .catch(next);
