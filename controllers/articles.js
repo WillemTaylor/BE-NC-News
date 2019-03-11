@@ -29,7 +29,7 @@ exports.postArticle = (req, res, next) => {
 
 exports.getArticlebyId = (req, res, next) => {
   const articleById = req.params.article_id;
-  //if (articleById > articleData.length) next({ status: 404, msg: 'Article not found' });
+  if (articleById > articleData.length) next({ status: 404, msg: 'Article not found' });
   fetchArticleById(articleById)
     .then(([article]) => {
       if (article) return res.status(200).send({ article });
