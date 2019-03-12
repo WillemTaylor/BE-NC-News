@@ -2,8 +2,7 @@ module.exports = [
   {
     username: 'tickle122',
     name: 'Tom Tickle',
-    avatar_url:
-      'https://vignette.wikia.nocookie.net/mrmen/images/d/d6/Mr-Tickle-9a.png/revision/latest?cb=20180127221953',
+    avatar_url: 'https://cdn.pixabay.com/photo/2016/12/13/21/20/alien-1905155_960_720.png',
   },
   {
     username: 'grumpy19',
