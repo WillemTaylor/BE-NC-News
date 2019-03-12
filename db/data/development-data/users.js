@@ -3,7 +3,7 @@ module.exports = [
     username: 'tickle122',
     name: 'Tom Tickle',
     avatar_url:
-      'https://shop.mrmen.com/wp-content/uploads/2017/12/MRTICKLEPRINT_40c8d455-59ee-4446-9890-5a221ee3eb82.jpg',
+      'https://vignette.wikia.nocookie.net/mrmen/images/d/d6/Mr-Tickle-9a.png/revision/latest?cb=20180127221953',
   },
   {
     username: 'grumpy19',
