@@ -34,7 +34,7 @@ exports.postCommentById = (req, res, next) => {
 exports.patchCommentByIdUpdateVote = (req, res, next) => {
   const commentById = req.params.comment_id;
   const updatedVote = req.body.inc_votes;
-  if (commentById > commentData.length) next({ status: 404, msg: 'Comment not found' });
+  // if (commentById > commentData.length) next({ status: 404, msg: 'Comment not found' });
   if (typeof updatedVote === 'string') {
     return res.status(400).send({ msg: "Comment couldn't be updated" });
   }
