@@ -58,7 +58,7 @@ exports.patchArticleByIdUpdateVote = (req, res, next) => {
 
 exports.deleteArticle = (req, res, next) => {
   const articleById = req.params.article_id;
-  if (articleById > articleData.length) next({ status: 404, msg: 'Not found' });
+  // if (articleById > articleData.length) next({ status: 404, msg: 'Not found' });
   return removeArticleById(articleById)
     .then((msg) => {
       if (msg) {
