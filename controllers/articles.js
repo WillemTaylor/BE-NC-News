@@ -5,7 +5,6 @@ const {
   fetchArticleByIdUpdateVote,
   removeArticleById,
 } = require('../models/articles');
-const { articleData } = require('../db/data');
 
 exports.getArticles = (req, res, next) => {
   const { sort_by, order, ...whereClauses } = req.query;
@@ -58,7 +57,6 @@ exports.patchArticleByIdUpdateVote = (req, res, next) => {
 
 exports.deleteArticle = (req, res, next) => {
   const articleById = req.params.article_id;
-  // if (articleById > articleData.length) next({ status: 404, msg: 'Not found' });
   removeArticleById(articleById)
     .then((msg) => {
       if (msg) {

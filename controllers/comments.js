@@ -9,7 +9,6 @@ const { commentData, articleData } = require('../db/data');
 exports.getCommentsbyId = (req, res, next) => {
   const articleById = req.params.article_id;
   const { sort_by, order } = req.query;
-  // if (articleById > articleData.length) return res.status(404).send({ msg: 'Comments not found' });
   return fetchCommentsbyId(sort_by, order, articleById)
     .then((comments) => {
       if (comments) return res.status(200).send({ comments });
@@ -21,9 +20,6 @@ exports.getCommentsbyId = (req, res, next) => {
 exports.postCommentById = (req, res, next) => {
   const articleById = req.params.article_id;
   const newComment = req.body;
-  const usernames = articleData.map(x => x.author);
-  // if (articleById > articleData.length) return res.status(404).send({ msg: 'Article not found' });
-  // if (!usernames.includes(newComment.username)) return res.status(422).send({ msg: "User doesn't exist" });
   return insertCommentByArticleId(articleById, newComment)
     .then(([comment]) => {
       res.status(201).send({ comment });
@@ -34,7 +30,6 @@ exports.postCommentById = (req, res, next) => {
 exports.patchCommentByIdUpdateVote = (req, res, next) => {
   const commentById = req.params.comment_id;
   const updatedVote = req.body.inc_votes;
-  // if (commentById > commentData.length) next({ status: 404, msg: 'Comment not found' });
   if (typeof updatedVote === 'string') {
     return res.status(400).send({ msg: "Comment couldn't be updated" });
   }
