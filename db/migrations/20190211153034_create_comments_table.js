@@ -8,7 +8,7 @@ exports.up = function (knex, Promise) {
       .unsigned()
       .onDelete('CASCADE');
     commentsTable.integer('votes').defaultTo(0);
-    commentsTable.datetime('created_at').defaultTo(new Date().toISOString());
+    commentsTable.datetime('created_at').defaultTo(knex.fn.now());
     commentsTable.text('body');
   });
 };
