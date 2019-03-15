@@ -4,7 +4,7 @@ const {
   fetchCommentByIdUpdateVote,
   removeCommentById,
 } = require('../models/comments');
-const { commentData, articleData } = require('../db/data');
+const { commentData } = require('../db/data');
 
 exports.getCommentsbyId = (req, res, next) => {
   const articleById = req.params.article_id;
